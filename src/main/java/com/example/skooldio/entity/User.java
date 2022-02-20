@@ -11,13 +11,23 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
+public class User{
 
     @Id
+    @GeneratedValue(
+            generator = "users_seq",
+            strategy = GenerationType.SEQUENCE
+    )
     @SequenceGenerator(name = "users_seq", allocationSize = 1, sequenceName = "users_seq")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq")
+    @Column(name="ID")
     private long id;
     @Column(unique = true, nullable = false)
     private String username;
+    @Column(nullable = false)
     private String name;
+
+    public User(String username, String name) {
+        this.username = username;
+        this.name = name;
+    }
 }

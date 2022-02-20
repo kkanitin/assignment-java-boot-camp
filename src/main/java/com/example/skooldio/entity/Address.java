@@ -1,5 +1,6 @@
 package com.example.skooldio.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,11 +12,15 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Address {
+public class Address{
 
     @Id
+    @GeneratedValue(
+            generator = "address_seq",
+            strategy = GenerationType.SEQUENCE
+    )
     @SequenceGenerator(name = "address_seq", allocationSize = 1, sequenceName = "address_seq")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "address_seq")
+    @Column(name="ID")
     private long id;
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -30,5 +35,6 @@ public class Address {
     private String khet;
     private String kwang;
     private String province;
-    private int postCode;
+    private Integer postCode;
+    private Integer priority;
 }
