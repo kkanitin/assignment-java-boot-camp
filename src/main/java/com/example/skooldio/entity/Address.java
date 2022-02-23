@@ -1,6 +1,5 @@
 package com.example.skooldio.entity;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,7 +23,7 @@ public class Address{
     private long id;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
     @Column(nullable = false)
     private String houseNo;
     private String buildingName;

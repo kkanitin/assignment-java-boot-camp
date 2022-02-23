@@ -2,6 +2,8 @@ package com.example.skooldio.service;
 
 import com.example.skooldio.entity.User;
 import com.example.skooldio.repository.UserRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,14 +14,12 @@ import java.util.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Service
+@Getter
+@Setter
 public class UserService extends CommonService {
 
-    private final UserRepository repository;
-
     @Autowired
-    public UserService(UserRepository repository) {
-        this.repository = repository;
-    }
+    private UserRepository repository;
 
     public User create(User entity) {
         checkNotNull(entity, "user must not be null.");
@@ -82,7 +82,7 @@ public class UserService extends CommonService {
         return (int) repository.count();
     }
 
-    public List<User> getList(int page, int size, String sortString, String dir) {
+    public List<User> listPaging(int page, int size, String sortString, String dir) {
 
         return repository.findAll(getPageable(page, size, sortString, dir)).getContent();
     }

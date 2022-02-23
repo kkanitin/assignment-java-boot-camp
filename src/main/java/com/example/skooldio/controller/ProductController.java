@@ -1,5 +1,6 @@
 package com.example.skooldio.controller;
 
+import com.example.skooldio.constant.UpdateQuantityMode;
 import com.example.skooldio.entity.Product;
 import com.example.skooldio.model.response.ProductModel;
 import com.example.skooldio.model.response.ResponseListModel;
@@ -8,6 +9,8 @@ import com.example.skooldio.model.request.UpdateProductQuantityListModel;
 import com.example.skooldio.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,16 +19,12 @@ import java.util.List;
 @Api(value = "ProductController")
 @RestController
 @RequestMapping(path = "v1/product")
+@Getter
+@Setter
 public class ProductController {
 
-    private final ProductService service;
-
     @Autowired
-    public ProductController(ProductService service) {
-        this.service = service;
-    }
-
-    // TODO: 19/2/2565 test all endpoint
+    private ProductService service;
 
     @PostMapping
     @ApiOperation(value = "create product", response = Product.class)
@@ -68,7 +67,7 @@ public class ProductController {
     public ResponseModel<Product> deduct(@PathVariable Long id, @RequestBody int amount) {
         ResponseModel<Product> responseModel = new ResponseModel<>();
         try {
-            Product product = service.updateQuantity(id, amount,"deduct");
+            Product product = service.updateQuantity(id, amount, UpdateQuantityMode.DEDUCT.name());
             responseModel.setMsg("Success");
             responseModel.setData(product);
         } catch (Exception ex) {
@@ -83,7 +82,7 @@ public class ProductController {
     public ResponseModel<Product> add(@PathVariable Long id, @RequestBody int amount) {
         ResponseModel<Product> responseModel = new ResponseModel<>();
         try {
-            Product product = service.updateQuantity(id, amount,"add");
+            Product product = service.updateQuantity(id, amount,UpdateQuantityMode.ADD.name());
             responseModel.setMsg("Success");
             responseModel.setData(product);
         } catch (Exception ex) {
@@ -98,7 +97,7 @@ public class ProductController {
     public ResponseListModel<ProductModel> deductList(@RequestBody UpdateProductQuantityListModel model) {
         ResponseListModel<ProductModel> responseListModel = new ResponseListModel<>();
         try {
-            List<ProductModel> products = service.updateQuantityList(model,"deduct");
+            List<ProductModel> products = service.updateQuantityList(model,UpdateQuantityMode.DEDUCT.name());
             responseListModel.setMsg("Success");
             responseListModel.setDatas(products);
         } catch (Exception ex) {
@@ -113,7 +112,7 @@ public class ProductController {
     public ResponseListModel<ProductModel> addList(@RequestBody UpdateProductQuantityListModel model) {
         ResponseListModel<ProductModel> responseListModel = new ResponseListModel<>();
         try {
-            List<ProductModel> products = service.updateQuantityList(model,"add");
+            List<ProductModel> products = service.updateQuantityList(model,UpdateQuantityMode.ADD.name());
             responseListModel.setMsg("Success");
             responseListModel.setDatas(products);
         } catch (Exception ex) {
@@ -163,7 +162,7 @@ public class ProductController {
 
     @GetMapping
     @ApiOperation(value = "get product as list", response = Product.class)
-    public ResponseListModel<Product> getList(
+    public ResponseListModel<Product> listPaging(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "id") String sort,
@@ -171,7 +170,7 @@ public class ProductController {
     ) {
         ResponseListModel<Product> responseListModel = new ResponseListModel<>();
         try {
-            List<Product> products = service.getList(page, size, sort, dir);
+            List<Product> products = service.listPaging(page, size, sort, dir);
 
             int countAll = service.countAll();
             int count = products.size();

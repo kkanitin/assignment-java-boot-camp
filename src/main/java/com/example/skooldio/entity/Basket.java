@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "basket")
@@ -24,10 +23,10 @@ public class Basket {
     private long id;
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User userId;
+    private User user;
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private Product productId;
+    private Product product;
     @Column(nullable = false)
     private int quantity;
 }

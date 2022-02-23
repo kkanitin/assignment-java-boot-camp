@@ -1,11 +1,14 @@
 package com.example.skooldio.controller;
 
 import com.example.skooldio.entity.Address;
+import com.example.skooldio.entity.User;
 import com.example.skooldio.model.response.ResponseListModel;
 import com.example.skooldio.model.response.ResponseModel;
 import com.example.skooldio.service.AddressService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,14 +17,12 @@ import java.util.List;
 @Api(value = "AddressEndpoint")
 @RestController
 @RequestMapping(path = "v1/address")
+@Getter
+@Setter
 public class AddressController {
 
-    private final AddressService service;
-
     @Autowired
-    public AddressController(AddressService service) {
-        this.service = service;
-    }
+    private AddressService service;
 
     @PostMapping
     @ApiOperation(value = "Address user", response = Address.class)
@@ -62,7 +63,7 @@ public class AddressController {
     }
 
     @DeleteMapping("/{id}")
-    @ApiOperation(value = "delete user by id", response = Address.class)
+    @ApiOperation(value = "delete address by id", response = Address.class)
     public ResponseModel<Address> delete(@PathVariable Long id) {
         ResponseModel<Address> responseModel = new ResponseModel<>();
         try {
@@ -78,9 +79,10 @@ public class AddressController {
         return responseModel;
     }
 
-    @GetMapping
-    @ApiOperation(value = "get user as list", response = Address.class)
-    public ResponseListModel<Address> getList(
+    @GetMapping("/listByUserId/{userId}")
+    @ApiOperation(value = "get address as list", response = Address.class)
+    public ResponseListModel<Address> listByUserId(
+            @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "id") String sort,
@@ -88,7 +90,57 @@ public class AddressController {
     ) {
         ResponseListModel<Address> responseListModel = new ResponseListModel<>();
         try {
-            List<Address> addresses = service.getList(page, size, sort, dir);
+            List<Address> addresses = service.listByUserId(userId,page, size, sort, dir);
+
+            int countAll = service.countByUserId(userId);
+            int count = addresses.size();
+            int next = 0;
+            if (count >= size) {
+                next = page + size;
+            }
+            if (next >= countAll) {
+                next = 0;
+            }
+
+            responseListModel.setDatas(addresses);
+            responseListModel.setAll(countAll);
+            responseListModel.setCount(count);
+            responseListModel.setNext(next);
+            responseListModel.setMsg("Success");
+            responseListModel.setErrorMsg(null);
+        } catch (Exception ex) {
+            responseListModel.setMsg("Failed");
+            responseListModel.setErrorMsg(ex.getMessage());
+        }
+        return responseListModel;
+    }
+
+    @PatchMapping("/{id}")
+    @ApiOperation(value = "update address except userId by id", response = Address.class)
+    public ResponseModel<Address> updateExceptUserId(@PathVariable Long id, @RequestBody Address entity) {
+        ResponseModel<Address> responseModel = new ResponseModel<>();
+        try {
+            Address address = service.updateExceptUserId(id, entity);
+            responseModel.setMsg("Success");
+            responseModel.setData(address);
+        } catch (Exception ex) {
+            responseModel.setMsg("Failed");
+            responseModel.setErrorMsg(ex.getMessage());
+        }
+        return responseModel;
+    }
+
+    @GetMapping
+    @ApiOperation(value = "get address as list", response = Address.class)
+    public ResponseListModel<Address> listPaging(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "asc") String dir
+    ) {
+        ResponseListModel<Address> responseListModel = new ResponseListModel<>();
+        try {
+            List<Address> addresses = service.listPaging(page, size, sort, dir);
 
             int countAll = service.countAll();
             int count = addresses.size();

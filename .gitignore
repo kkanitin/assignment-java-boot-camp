@@ -33,3 +33,7 @@ build/
 .vscode/
 
 skooldio.mv.db
+
+skooldio.trace.db
+
+DUMP.SQL

@@ -6,6 +6,8 @@ import com.example.skooldio.model.request.CardModel;
 import com.example.skooldio.model.request.UserCardRequestModel;
 import com.example.skooldio.repository.UserCardRepository;
 import com.example.skooldio.repository.UserRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +19,14 @@ import java.util.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Service
+@Getter
+@Setter
 public class UserCardService extends CommonService{
 
-    private UserCardRepository repository;
-    private UserRepository userRepository;
-
     @Autowired
-    public UserCardService(UserCardRepository userCardRepository, UserRepository userRepository) {
-        this.repository = userCardRepository;
-        this.userRepository = userRepository;
-    }
+    private UserCardRepository repository;
+    @Autowired
+    private UserRepository userRepository;
 
     public int countAll() {
         return (int) repository.count();
@@ -42,7 +42,7 @@ public class UserCardService extends CommonService{
                 .orElseThrow(() -> new NoSuchElementException(
                         String.format("user id %d not found.", model.getUserId())
                 ));
-        userCard.setUserId(user);
+        userCard.setUser(user);
         userCard.setCardNo(model.getCardNo());
         userCard.setCardType(model.getCardType());
         userCard.setExpireMonth(model.getExpireMonth());
@@ -73,7 +73,7 @@ public class UserCardService extends CommonService{
                 () -> new NoSuchElementException(String.format("user id %d not found.", userId))
         );
 
-        Optional<List<UserCard>> optional = repository.getByUserId(user, getPageable(page, size, sortString, dir));
+        Optional<List<UserCard>> optional = repository.listByUserId(user, getPageable(page, size, sortString, dir));
         return optional.orElse(null);
     }
 
@@ -111,7 +111,7 @@ public class UserCardService extends CommonService{
         repository.deleteById(id);
     }
 
-    public List<UserCard> getList(int page, int size, String sortString, String dir) {
+    public List<UserCard> listPaging(int page, int size, String sortString, String dir) {
         return repository.findAll(getPageable(page, size, sortString, dir)).getContent();
     }
 }

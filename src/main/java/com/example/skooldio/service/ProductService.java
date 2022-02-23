@@ -1,10 +1,13 @@
 package com.example.skooldio.service;
 
+import com.example.skooldio.constant.UpdateQuantityMode;
 import com.example.skooldio.entity.Product;
 import com.example.skooldio.model.request.ProductQuantityModel;
 import com.example.skooldio.model.request.UpdateProductQuantityListModel;
 import com.example.skooldio.model.response.ProductModel;
 import com.example.skooldio.repository.ProductRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,14 +21,12 @@ import java.util.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Service
+@Getter
+@Setter
 public class ProductService extends CommonService {
 
-    private final ProductRepository repository;
-
     @Autowired
-    public ProductService(ProductRepository productRespository) {
-        this.repository = productRespository;
-    }
+    private ProductRepository repository;
 
     public Product create(Product entity) {
         checkNotNull(entity, "user must not be null.");
@@ -53,11 +54,11 @@ public class ProductService extends CommonService {
                 new IllegalArgumentException(String.format("product with id %d does not exists.", id)));
 
         int remain = product.getQuantity();
-        if ("deduct".equalsIgnoreCase(mode) && want > remain) {
+        if (UpdateQuantityMode.DEDUCT.name().equalsIgnoreCase(mode) && want > remain) {
             throw new IllegalArgumentException(String.format("product %d not enough quantity.You want %d but we have %d",
                     id, want, remain));
         }
-        int quantity = "deduct".equalsIgnoreCase(mode) ? remain - want : remain + want;
+        int quantity = UpdateQuantityMode.DEDUCT.name().equalsIgnoreCase(mode) ? remain - want : remain + want;
         repository.updateQuantity(id, quantity);
 
         product.setQuantity(quantity);
@@ -71,7 +72,7 @@ public class ProductService extends CommonService {
             checkNotNull(model, "model must not be null.");
             checkNotNull(model.getProductQuantityModelList(), "list must not be null.");
 
-            boolean isDeduct = "deduct".equalsIgnoreCase(mode);
+            boolean isDeduct = UpdateQuantityMode.DEDUCT.name().equalsIgnoreCase(mode);
             for (ProductQuantityModel item : model.getProductQuantityModelList()) {
                 int remain = repository.findById(item.getProductId())
                         .orElseThrow(() ->
@@ -86,7 +87,7 @@ public class ProductService extends CommonService {
                     }
                 }
 
-                int quantity = "deduct".equalsIgnoreCase(mode) ? remain - want : remain + want;
+                int quantity = UpdateQuantityMode.DEDUCT.name().equalsIgnoreCase(mode) ? remain - want : remain + want;
 
                 Product product = this.getById(item.getProductId());
                 ProductModel productModel = new ProductModel(product.getId(), product.getName(), product.getPriceBaht(), quantity, product.getDetail());
@@ -118,7 +119,7 @@ public class ProductService extends CommonService {
         return (int) repository.count();
     }
 
-    public List<Product> getList(int page, int size, String sortString, String dir) {
+    public List<Product> listPaging(int page, int size, String sortString, String dir) {
 
         return repository.findAll(getPageable(page, size, sortString, dir)).getContent();
     }

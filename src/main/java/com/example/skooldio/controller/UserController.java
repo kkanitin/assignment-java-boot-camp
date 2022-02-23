@@ -6,6 +6,8 @@ import com.example.skooldio.model.response.ResponseModel;
 import com.example.skooldio.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,14 +16,12 @@ import java.util.List;
 @Api(value = "UserController")
 @RestController
 @RequestMapping(path = "v1/user")
+@Getter
+@Setter
 public class UserController {
 
-    private final UserService service;
-
     @Autowired
-    public UserController(UserService service) {
-        this.service = service;
-    }
+    private UserService service;
 
     @PostMapping
     @ApiOperation(value = "create user", response = User.class)
@@ -101,7 +101,7 @@ public class UserController {
 
     @GetMapping
     @ApiOperation(value = "get user as list", response = User.class)
-    public ResponseListModel<User> getList(
+    public ResponseListModel<User> listPaging(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "id") String sort,
@@ -109,7 +109,7 @@ public class UserController {
     ) {
         ResponseListModel<User> responseListModel = new ResponseListModel<>();
         try {
-            List<User> users = service.getList(page, size, sort, dir);
+            List<User> users = service.listPaging(page, size, sort, dir);
 
             int countAll = service.countAll();
             int count = users.size();

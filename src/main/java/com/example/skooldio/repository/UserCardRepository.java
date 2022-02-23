@@ -14,8 +14,8 @@ import java.util.Optional;
 
 public interface UserCardRepository extends JpaRepository<UserCard, Long> {
 
-    @Query("SELECT u FROM UserCard u WHERE u.userId = :userId")
-    Optional<List<UserCard>> getByUserId(@Param("userId") User userId, Pageable pageable);
+    @Query("SELECT u FROM UserCard u WHERE u.user = :userId")
+    Optional<List<UserCard>> listByUserId(@Param("userId") User userId, Pageable pageable);
 
     @Transactional
     @Modifying

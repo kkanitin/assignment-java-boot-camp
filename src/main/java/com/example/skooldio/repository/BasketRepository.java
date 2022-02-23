@@ -17,12 +17,12 @@ import java.util.Optional;
 @Repository
 public interface BasketRepository extends JpaRepository<Basket, Long> {
 
-    @Query("SELECT b from Basket b where b.userId = :userId")
-    Optional<List<Basket>> getByUserId(@Param("userId") User userId, Pageable pageable);
+    @Query("SELECT b from Basket b where b.user = :userId")
+    Optional<List<Basket>> listByUserId(@Param("userId") User userId, Pageable pageable);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Basket b SET b.productId = :productId ,b.quantity = :quantity WHERE b.id = :id")
+    @Query("UPDATE Basket b SET b.product = :productId ,b.quantity = :quantity WHERE b.id = :id")
     void updateExceptUserId(@Param("id") Long id, @Param("productId") Product productId, @Param("quantity") int quantity);
 
     @Transactional
@@ -30,6 +30,6 @@ public interface BasketRepository extends JpaRepository<Basket, Long> {
     @Query("UPDATE Basket b SET b.quantity = :quantity WHERE b.id = :id")
     void updateQuantity(@Param("id") Long id, @Param("quantity") int quantity);
 
-    @Query("SELECT b from Basket b where b.userId = :userId AND b.productId = :productId")
+    @Query("SELECT b from Basket b where b.user = :userId AND b.product = :productId")
     Optional<Basket> getByUserIdAndProductId(@Param("userId") User userId, @Param("productId") Product productId);
 }

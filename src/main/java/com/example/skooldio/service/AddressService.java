@@ -1,25 +1,29 @@
 package com.example.skooldio.service;
 
 import com.example.skooldio.entity.Address;
+import com.example.skooldio.entity.User;
 import com.example.skooldio.repository.AddressRepository;
+import com.example.skooldio.repository.UserRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Service
+@Getter
+@Setter
 public class AddressService extends CommonService {
 
-    private final AddressRepository repository;
-
     @Autowired
-    public AddressService(AddressRepository repository) {
-        this.repository = repository;
-    }
+    private AddressRepository repository;
+    @Autowired
+    private UserRepository userRepository;
 
     public Address create(Address entity) {
         checkNotNull(entity, "address must not be null.");
@@ -29,14 +33,20 @@ public class AddressService extends CommonService {
 
     public Address getById(Long id) {
         checkNotNull(id, "id must not be null.");
+        return repository.findById(id).orElse(null);
+    }
 
-        Optional<Address> address = repository.findById(id);
-        return address.orElse(null);
+    public List<Address> listByUserId(Long userId, int page, int size, String sort, String dir) {
+        checkNotNull(userId, "userId must not be null.");
+
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new NoSuchElementException(String.format("user id %d not found.", userId)));
+
+        return repository.getByUserId(user, getPageable(page, size, sort, dir));
     }
 
     public void deleteById(Long id) throws Exception {
         checkNotNull(id, "id must not be null.");
-
         repository.deleteById(id);
     }
 
@@ -58,8 +68,16 @@ public class AddressService extends CommonService {
         return (int) repository.count();
     }
 
-    public List<Address> getList(int page, int size, String sortString, String dir) {
+    public List<Address> listPaging(int page, int size, String sort, String dir) {
+        return repository.findAll(getPageable(page, size, sort, dir)).getContent();
+    }
 
-        return repository.findAll(getPageable(page, size, sortString, dir)).getContent();
+    public int countByUserId(Long userId) {
+        checkNotNull(userId, "userId must not be null.");
+
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new NoSuchElementException(String.format("user id %d not found.", userId)));
+
+        return repository.countByUserId(user);
     }
 }

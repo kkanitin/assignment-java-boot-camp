@@ -8,6 +8,8 @@ import com.example.skooldio.model.request.UserCardRequestModel;
 import com.example.skooldio.service.UserCardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,16 +18,12 @@ import java.util.List;
 @Api(value = "UserCardController")
 @RestController
 @RequestMapping(path = "v1/userCard")
+@Getter
+@Setter
 public class UserCardController {
 
-    private final UserCardService service;
-
     @Autowired
-    public UserCardController(UserCardService service) {
-        this.service = service;
-    }
-
-    //TODO: 17/2/2565 test all endpoint
+    private UserCardService service;
 
     @PostMapping
     @ApiOperation(value = "create usercard", response = UserCard.class)
@@ -45,7 +43,7 @@ public class UserCardController {
     }
 
     @PatchMapping("/{id}")
-    @ApiOperation(value = "update card by id", response = UserCard.class)
+    @ApiOperation(value = "update usercard by id", response = UserCard.class)
     public ResponseModel<UserCard> update(@PathVariable Long id, @RequestBody CardModel cardModel) {
         ResponseModel<UserCard> responseModel = new ResponseModel<>();
         try {
@@ -82,9 +80,9 @@ public class UserCardController {
         return responseModel;
     }
 
-    @GetMapping("/getByUserId/{userId}")
+    @GetMapping("/listByUserId/{userId}")
     @ApiOperation(value = "get usercard by userid", response = UserCard.class)
-    public ResponseListModel<UserCard> getByUserId(
+    public ResponseListModel<UserCard> listByUserId(
             @PathVariable int userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -142,7 +140,7 @@ public class UserCardController {
 
     @GetMapping
     @ApiOperation(value = "get usercard as list", response = UserCard.class)
-    public ResponseListModel<UserCard> getList(
+    public ResponseListModel<UserCard> listPaging(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "id") String sort,
@@ -150,7 +148,7 @@ public class UserCardController {
     ) {
         ResponseListModel<UserCard> responseListModel = new ResponseListModel<>();
         try {
-            List<UserCard> userCards = service.getList(page, size, sort, dir);
+            List<UserCard> userCards = service.listPaging(page, size, sort, dir);
 
             int countAll = service.countAll();
             int count = userCards.size();

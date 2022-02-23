@@ -23,7 +23,7 @@ public class UserCard {
     private long id;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User userId;
+    private User user;
     private String cardType;
     private String cardNo;
     private String expireMonth;

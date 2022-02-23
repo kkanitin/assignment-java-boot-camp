@@ -2,7 +2,6 @@ package com.example.skooldio.controller;
 
 import com.example.skooldio.entity.Basket;
 import com.example.skooldio.model.request.BasketExceptUserIdModel;
-import com.example.skooldio.model.request.BusketCheckoutModel;
 import com.example.skooldio.model.response.BasketResponseModel;
 import com.example.skooldio.model.response.ResponseListModel;
 import com.example.skooldio.model.response.ResponseModel;
@@ -11,6 +10,8 @@ import com.example.skooldio.service.BasketService;
 import com.example.skooldio.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,16 +20,15 @@ import java.util.List;
 @Api(value = "BasketController")
 @RestController
 @RequestMapping(path = "v1/basket")
+@Getter
+@Setter
 public class BasketController {
 
-    private final BasketService service;
-    private final ProductService productService;
-
     @Autowired
-    public BasketController(BasketService service, ProductService productService) {
-        this.service = service;
-        this.productService = productService;
-    }
+    private BasketService service;
+    @Autowired
+    private ProductService productService;
+
 // TODO: 19/2/2565 test all endpoint
 
     @PostMapping
@@ -49,6 +49,7 @@ public class BasketController {
         return responseModel;
     }
 
+    // TODO: 20/2/2565 implement checkout - insert into transaction
     @PutMapping("/checkout/{userId}")
     @ApiOperation(value = "checkout basket by userid", response = Basket.class)
     public ResponseModel<BasketResponseModel> checkout(@PathVariable Long userId, @RequestBody List<Integer> productsIdList) {
@@ -105,9 +106,9 @@ public class BasketController {
         return responseModel;
     }
 
-    @GetMapping("/getByUserId/{userId}")
+    @GetMapping("/listByUserId/{userId}")
     @ApiOperation(value = "get basket list by userid", response = Basket.class)
-    public ResponseModel<BasketResponseModel> getByUserId(
+    public ResponseModel<BasketResponseModel> listByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -146,7 +147,7 @@ public class BasketController {
 
     @GetMapping
     @ApiOperation(value = "get user as list", response = Basket.class)
-    public ResponseListModel<Basket> getList(
+    public ResponseListModel<Basket> listPaging(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "id") String sort,
@@ -154,7 +155,7 @@ public class BasketController {
     ) {
         ResponseListModel<Basket> responseListModel = new ResponseListModel<>();
         try {
-            List<Basket> baskets = service.getList(page, size, sort, dir);
+            List<Basket> baskets = service.listPaging(page, size, sort, dir);
 
             int countAll = service.countAll();
             int count = baskets.size();

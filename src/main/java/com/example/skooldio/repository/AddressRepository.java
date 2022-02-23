@@ -1,12 +1,16 @@
 package com.example.skooldio.repository;
 
 import com.example.skooldio.entity.Address;
+import com.example.skooldio.entity.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
@@ -30,4 +34,10 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
                             @Param("province") String province,
                             @Param("postCode") int postCode,
                             @Param("priority") int priority);
+
+    @Query("SELECT a from Address a where a.user = :userId")
+    List<Address> getByUserId(@Param("userId") User user, Pageable pageable);
+
+    @Query("SELECT COUNT(a) from Address a where a.user = :userId")
+    int countByUserId(@Param("userId") User user);
 }
