@@ -123,4 +123,12 @@ public class ProductService extends CommonService {
 
         return repository.findAll(getPageable(page, size, sortString, dir)).getContent();
     }
+
+    public List<Product> listByName(String name, int page, int size, String sort, String dir) {
+        return repository.listByName(name, this.getPageable(page, size, sort, dir)).orElse(new ArrayList<Product>());
+    }
+
+    public int countByName(String name) {
+        return repository.countByName(name);
+    }
 }

@@ -76,7 +76,7 @@ public class BasketService extends CommonService {
         return repository.save(basket);
     }
 
-    public BasketResponseModel getByUserid(Long userId, int page, int size, String sortString, String dir) {
+    public BasketResponseModel listByUserId(Long userId, int page, int size, String sortString, String dir) {
         checkNotNull(userId, "userId must not be null.");
 
         User user = userRepository.findById(userId).orElseThrow(
@@ -142,16 +142,17 @@ public class BasketService extends CommonService {
     }
 
     @Transactional()
-    public BasketResponseModel checkout(Long userId, List<Integer> requestCheckoutProduct, ProductService productService) {
-        List<ProductModel> basketProduct = this.getByUserid(userId, 0, -1, "id", "asc").getProducts();
+    public BasketResponseModel checkout(Long userId, List<Integer> requestCheckoutProduct) {
+        List<ProductModel> basketProduct = this.listByUserId(userId, 0, -1, "id", "asc").getProducts();
         List<ProductModel> tempBasketProduct = new ArrayList<>(basketProduct);
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(String.format("user id %d is not found.", userId)));
 
         List<ProductModel> deductProducts = new ArrayList<>();
 
-//        double amount = (double) 0;
-        Address address = addressService.listByUserId(userId, 0, 1, "priority", "asc").get(0);
-        UserCard userCard = userCardService.getByUserId(userId, 0, 1, "priority", "asc").get(0);
+        List<Address> addresss = addressService.listByUserId(userId, 0, 1, "priority", "asc");
+        List<UserCard> userCards = userCardService.listByUserId(userId, 0, 1, "priority", "asc");
+        Address address = addresss.size() < 1 ? new Address() : addresss.get(0);
+        UserCard userCard = userCards.size() < 1 ? new UserCard() : userCards.get(0);
 
         if (!basketProduct.isEmpty()) {
             for (Integer productId : requestCheckoutProduct) {
@@ -163,7 +164,6 @@ public class BasketService extends CommonService {
         //add to transactions
         List<Transaction> transactions = new ArrayList<>();
         if (!deductProducts.isEmpty()) {
-//            UpdateProductQuantityListModel updateProductQuantityListModel = new UpdateProductQuantityListModel();
             for (ProductModel item : deductProducts) {
                 ProductModel productModel = tempBasketProduct.stream().filter(element -> element.getId() == item.getId()).collect(Collectors.toList()).get(0);
                 Product product = new Product(item.getId(), productModel.getName(),
@@ -173,10 +173,7 @@ public class BasketService extends CommonService {
                 Date date = new Date(System.currentTimeMillis());
                 transactions.add(new Transaction(user, userCard, address, product,
                         item.getQuantity(), amount, TransactionStatus.PENDING.name(), date));
-//                amount += (item.getPriceBaht() * item.getQuantity());
-//                updateProductQuantityListModel.addProductQuantityModel(new ProductQuantityModel(item.getId(), item.getQuantity()));
             }
-//            productService.updateQuantityList(updateProductQuantityListModel, UpdateQuantityMode.DEDUCT.name());
         }
 
         //insert transaction

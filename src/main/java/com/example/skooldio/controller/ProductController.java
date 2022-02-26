@@ -82,7 +82,7 @@ public class ProductController {
     public ResponseModel<Product> add(@PathVariable Long id, @RequestBody int amount) {
         ResponseModel<Product> responseModel = new ResponseModel<>();
         try {
-            Product product = service.updateQuantity(id, amount,UpdateQuantityMode.ADD.name());
+            Product product = service.updateQuantity(id, amount, UpdateQuantityMode.ADD.name());
             responseModel.setMsg("Success");
             responseModel.setData(product);
         } catch (Exception ex) {
@@ -97,7 +97,7 @@ public class ProductController {
     public ResponseListModel<ProductModel> deductList(@RequestBody UpdateProductQuantityListModel model) {
         ResponseListModel<ProductModel> responseListModel = new ResponseListModel<>();
         try {
-            List<ProductModel> products = service.updateQuantityList(model,UpdateQuantityMode.DEDUCT.name());
+            List<ProductModel> products = service.updateQuantityList(model, UpdateQuantityMode.DEDUCT.name());
             responseListModel.setMsg("Success");
             responseListModel.setDatas(products);
         } catch (Exception ex) {
@@ -112,7 +112,7 @@ public class ProductController {
     public ResponseListModel<ProductModel> addList(@RequestBody UpdateProductQuantityListModel model) {
         ResponseListModel<ProductModel> responseListModel = new ResponseListModel<>();
         try {
-            List<ProductModel> products = service.updateQuantityList(model,UpdateQuantityMode.ADD.name());
+            List<ProductModel> products = service.updateQuantityList(model, UpdateQuantityMode.ADD.name());
             responseListModel.setMsg("Success");
             responseListModel.setDatas(products);
         } catch (Exception ex) {
@@ -141,6 +141,42 @@ public class ProductController {
             responseModel.setErrorMsg(ex.getMessage());
         }
         return responseModel;
+    }
+
+    @GetMapping("/listByName")
+    @ApiOperation(value = "list product by name", response = Product.class)
+    public ResponseListModel<Product> listByName(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "asc") String dir
+    ) {
+        ResponseListModel<Product> responseListModel = new ResponseListModel<>();
+        try {
+            List<Product> products = service.listByName(name, page, size, sort, dir);
+            int countAll = service.countByName(name);
+            int count = products.size();
+            int next = 0;
+            if (count >= size) {
+                next = page + size;
+            }
+            if (next >= countAll) {
+                next = 0;
+            }
+
+            responseListModel.setDatas(products);
+            responseListModel.setAll(countAll);
+            responseListModel.setCount(count);
+            responseListModel.setNext(next);
+            responseListModel.setMsg("Success");
+            responseListModel.setErrorMsg(null);
+
+        } catch (Exception ex) {
+            responseListModel.setMsg("Failed");
+            responseListModel.setErrorMsg(ex.getMessage());
+        }
+        return responseListModel;
     }
 
     @DeleteMapping("/{id}")

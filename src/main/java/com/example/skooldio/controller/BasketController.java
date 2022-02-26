@@ -29,8 +29,6 @@ public class BasketController {
     @Autowired
     private ProductService productService;
 
-// TODO: 19/2/2565 test all endpoint
-
     @PostMapping
     @ApiOperation(value = "create basket", response = Basket.class)
     public ResponseModel<Basket> create(@RequestBody BasketRequestModel model) {
@@ -49,13 +47,12 @@ public class BasketController {
         return responseModel;
     }
 
-    // TODO: 20/2/2565 implement checkout - insert into transaction
     @PutMapping("/checkout/{userId}")
     @ApiOperation(value = "checkout basket by userid", response = Basket.class)
     public ResponseModel<BasketResponseModel> checkout(@PathVariable Long userId, @RequestBody List<Integer> productsIdList) {
         ResponseModel<BasketResponseModel> responseModel = new ResponseModel<>();
         try {
-            BasketResponseModel basketResponseModel = service.checkout(userId, productsIdList, productService);
+            BasketResponseModel basketResponseModel = service.checkout(userId, productsIdList);
             responseModel.setMsg("Success");
             responseModel.setData(basketResponseModel);
         } catch (Exception ex) {
@@ -116,7 +113,7 @@ public class BasketController {
             @RequestParam(defaultValue = "asc") String dir) {
         ResponseModel<BasketResponseModel> responseModel = new ResponseModel<>();
         try {
-            BasketResponseModel baskets = service.getByUserid(userId, page, size, sort, dir);
+            BasketResponseModel baskets = service.listByUserId(userId, page, size, sort, dir);
             responseModel.setData(baskets);
             responseModel.setMsg("Success");
             responseModel.setErrorMsg(null);
@@ -146,7 +143,7 @@ public class BasketController {
     }
 
     @GetMapping
-    @ApiOperation(value = "get user as list", response = Basket.class)
+    @ApiOperation(value = "get basket as list", response = Basket.class)
     public ResponseListModel<Basket> listPaging(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,

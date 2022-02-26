@@ -21,7 +21,6 @@ public abstract class CommonService {
         Sort.Direction direction;
         if (dir.equalsIgnoreCase("asc")) {
             direction = Sort.Direction.ASC;
-
         } else {
             direction = Sort.Direction.DESC;
         }

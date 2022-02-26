@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
@@ -36,7 +37,7 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
                             @Param("priority") int priority);
 
     @Query("SELECT a from Address a where a.user = :userId")
-    List<Address> getByUserId(@Param("userId") User user, Pageable pageable);
+    Optional<List<Address>> listByUserId(@Param("userId") User user, Pageable pageable);
 
     @Query("SELECT COUNT(a) from Address a where a.user = :userId")
     int countByUserId(@Param("userId") User user);

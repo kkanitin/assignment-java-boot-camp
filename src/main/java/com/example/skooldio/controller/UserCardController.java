@@ -91,9 +91,9 @@ public class UserCardController {
     ) {
         ResponseListModel<UserCard> responseListModel = new ResponseListModel<>();
         try {
-            List<UserCard> userCards = service.getByUserId((long) userId, page, size, sort, dir);
+            List<UserCard> userCards = service.listByUserId((long) userId, page, size, sort, dir);
             responseListModel.setDatas(userCards);
-            int countAll = service.countAll();
+            int countAll = service.countByUserId((long) userId);
             int count = userCards.size();
             int next = 0;
             if (count >= size) {

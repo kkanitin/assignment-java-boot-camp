@@ -49,7 +49,7 @@ public class UserCardService extends CommonService{
         userCard.setExpireYear(model.getExpireYear());
         userCard.setCcvOrCvv(model.getCcvOrCvv());
 
-        List<UserCard> userCards = getByUserId((long) model.getUserId(),
+        List<UserCard> userCards = listByUserId((long) model.getUserId(),
                 0, 1, "priority", "desc");
         int priority;
         if (userCards.isEmpty()) {
@@ -66,15 +66,22 @@ public class UserCardService extends CommonService{
         return repository.save(userCard);
     }
 
-    public List<UserCard> getByUserId(Long userId, int page, int size, String sortString, String dir) {
+    public List<UserCard> listByUserId(Long userId, int page, int size, String sortString, String dir) {
         checkNotNull(userId, "userId must not be nul");
 
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new NoSuchElementException(String.format("user id %d not found.", userId))
-        );
+                () -> new NoSuchElementException(String.format("user id %d not found.", userId)));
 
         Optional<List<UserCard>> optional = repository.listByUserId(user, getPageable(page, size, sortString, dir));
         return optional.orElse(null);
+    }
+
+    public int countByUserId(Long userId) {
+        checkNotNull(userId, "userId must not be nul");
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NoSuchElementException(String.format("user id %d not found.", userId)));
+
+        return repository.countByUserId(user);
     }
 
     @Transactional

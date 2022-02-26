@@ -22,4 +22,7 @@ public interface UserCardRepository extends JpaRepository<UserCard, Long> {
     @Query("UPDATE UserCard u SET u.cardNo = :cardNo , u.cardType = :cardType , u.ccvOrCvv = :ccvOrCvv , u.expireMonth = :expireMonth , u.expireYear = :expireYear WHERE u.id = :id")
     void updateCard(Long id, @Param("cardNo") String cardNo, @Param("cardType") String cardType,
                     @Param("ccvOrCvv") String ccvOrCvv, @Param("expireMonth") String expireMonth, @Param("expireYear") String expireYear);
+
+    @Query("SELECT COUNT(u) FROM UserCard u WHERE u.user = :userId")
+    Integer countByUserId(@Param("userId") User userId);
 }

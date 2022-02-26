@@ -1,32 +1,20 @@
-package com.example.skooldio.entity;
+package com.example.skooldio.model.response;
 
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "address")
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class Address{
+@NoArgsConstructor
+@ApiModel(description = "AddressResponse")
+public class AddressResponseModel {
 
-    @Id
-    @GeneratedValue(
-            generator = "address_seq",
-            strategy = GenerationType.SEQUENCE
-    )
-    @SequenceGenerator(name = "address_seq", allocationSize = 1, sequenceName = "address_seq")
-    @Column(name="ID")
-    private long id;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-    @Column(nullable = false)
+    private Long id;
+    private Long user;
     private String houseNo;
     private String buildingName;
     private String floor;
@@ -39,7 +27,7 @@ public class Address{
     private Integer postCode;
     private Integer priority;
 
-    public Address(User user, String houseNo, String buildingName, String floor, String village, String soi, String road, String khet, String kwang, String province, Integer postCode, Integer priority) {
+    public AddressResponseModel(Long user, String houseNo, String buildingName, String floor, String village, String soi, String road, String khet, String kwang, String province, Integer postCode, Integer priority) {
         this.user = user;
         this.houseNo = houseNo;
         this.buildingName = buildingName;
@@ -53,4 +41,6 @@ public class Address{
         this.postCode = postCode;
         this.priority = priority;
     }
+
+
 }

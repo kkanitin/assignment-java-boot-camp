@@ -1,7 +1,7 @@
 package com.example.skooldio.controller;
 
 import com.example.skooldio.entity.Address;
-import com.example.skooldio.entity.User;
+import com.example.skooldio.model.response.AddressResponseModel;
 import com.example.skooldio.model.response.ResponseListModel;
 import com.example.skooldio.model.response.ResponseModel;
 import com.example.skooldio.service.AddressService;
@@ -116,14 +116,15 @@ public class AddressController {
     }
 
     @PatchMapping("/{id}")
-    @ApiOperation(value = "update address except userId by id", response = Address.class)
-    public ResponseModel<Address> updateExceptUserId(@PathVariable Long id, @RequestBody Address entity) {
-        ResponseModel<Address> responseModel = new ResponseModel<>();
+    @ApiOperation(value = "update address except userId by id", response = AddressResponseModel.class)
+    public ResponseModel<AddressResponseModel> updateExceptUserId(@PathVariable Long id, @RequestBody Address entity) {
+        ResponseModel<AddressResponseModel> responseModel = new ResponseModel<>();
         try {
-            Address address = service.updateExceptUserId(id, entity);
+            AddressResponseModel model = service.updateExceptUserId(id, entity);
             responseModel.setMsg("Success");
-            responseModel.setData(address);
+            responseModel.setData(model);
         } catch (Exception ex) {
+            ex.printStackTrace();
             responseModel.setMsg("Failed");
             responseModel.setErrorMsg(ex.getMessage());
         }
