@@ -23,6 +23,10 @@ import java.util.List;
 @Setter
 public class ProductController {
 
+    public static final String LIST_BY_NAME_ENDPOINT = "/name";
+    public static final String ADD_PRODUCT_ENDPOINT = "/add";
+    public static final String DEDUCT_PRODUCT_ENDPOINT = "/deduct";
+
     @Autowired
     private ProductService service;
 
@@ -62,7 +66,7 @@ public class ProductController {
         return responseModel;
     }
 
-    @PatchMapping("/deduct/{id}")
+    @PatchMapping(DEDUCT_PRODUCT_ENDPOINT + "/{id}")
     @ApiOperation(value = "deduct product by id", response = Product.class)
     public ResponseModel<Product> deduct(@PathVariable Long id, @RequestBody int amount) {
         ResponseModel<Product> responseModel = new ResponseModel<>();
@@ -77,7 +81,7 @@ public class ProductController {
         return responseModel;
     }
 
-    @PatchMapping("/add/{id}")
+    @PatchMapping(ADD_PRODUCT_ENDPOINT + "/{id}")
     @ApiOperation(value = "add product by id", response = Product.class)
     public ResponseModel<Product> add(@PathVariable Long id, @RequestBody int amount) {
         ResponseModel<Product> responseModel = new ResponseModel<>();
@@ -92,7 +96,7 @@ public class ProductController {
         return responseModel;
     }
 
-    @PatchMapping("/deductList")
+    @PatchMapping(DEDUCT_PRODUCT_ENDPOINT)
     @ApiOperation(value = "deduct product list", response = Product.class)
     public ResponseListModel<ProductModel> deductList(@RequestBody UpdateProductQuantityListModel model) {
         ResponseListModel<ProductModel> responseListModel = new ResponseListModel<>();
@@ -107,7 +111,7 @@ public class ProductController {
         return responseListModel;
     }
 
-    @PatchMapping("/addList")
+    @PatchMapping(ADD_PRODUCT_ENDPOINT)
     @ApiOperation(value = "add product list", response = Product.class)
     public ResponseListModel<ProductModel> addList(@RequestBody UpdateProductQuantityListModel model) {
         ResponseListModel<ProductModel> responseListModel = new ResponseListModel<>();
@@ -143,7 +147,7 @@ public class ProductController {
         return responseModel;
     }
 
-    @GetMapping("/listByName")
+    @GetMapping(LIST_BY_NAME_ENDPOINT)
     @ApiOperation(value = "list product by name", response = Product.class)
     public ResponseListModel<Product> listByName(
             @RequestParam String name,

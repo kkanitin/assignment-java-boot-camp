@@ -20,7 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UserControllerTest {
+class UserControllerTest extends ControllerTest {
+
+    public final String RELATIVE_ENDPOINT = "/v1/user";
+    public final String ABSOLUTE_ENDPOINT = "/skooldio/api/v1/user";
 
     @LocalServerPort
     private int port;
@@ -41,7 +44,7 @@ class UserControllerTest {
 
         when(service.getById(10L)).thenReturn(user);
 
-        ResponseModel result = testRestTemplate.getForObject("/v1/user/10", ResponseModel.class);
+        ResponseModel result = testRestTemplate.getForObject(RELATIVE_ENDPOINT + "/10", ResponseModel.class);
         assertEquals("Success", result.getMsg());
     }
 
@@ -57,7 +60,7 @@ class UserControllerTest {
         when(service.listPaging(0, 20, "id", "asc")).thenReturn(users);
         when(service.countAll()).thenReturn(users.size());
         //Act
-        ResponseListModel<User> result = testRestTemplate.getForObject("/v1/user", ResponseListModel.class);
+        ResponseListModel<User> result = testRestTemplate.getForObject(RELATIVE_ENDPOINT, ResponseListModel.class);
         //verify
         assertEquals(2, result.getCount());
         assertEquals(2, result.getAll());

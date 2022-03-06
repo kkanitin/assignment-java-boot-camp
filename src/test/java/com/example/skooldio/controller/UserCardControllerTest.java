@@ -18,7 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UserCardControllerTest {
+class UserCardControllerTest extends ControllerTest {
+
+    public final String RELATIVE_ENDPOINT = "/v1/userCard";
+    public final String ABSOLUTE_ENDPOINT = "/skooldio/api/v1/userCard";
 
     @LocalServerPort
     private int port;
@@ -50,7 +53,7 @@ class UserCardControllerTest {
         params.put("sort", "id");
         params.put("dir", "asc");
 
-        ResponseListModel<Address> result = testRestTemplate.getForObject("/v1/userCard/listByUserId/10", ResponseListModel.class, params);
+        ResponseListModel<Address> result = testRestTemplate.getForObject(RELATIVE_ENDPOINT + UserCardController.USER_ENDPOINT + "/10", ResponseListModel.class, params);
         assertEquals("Success", result.getMsg());
         assertEquals(2, result.getCount());
         assertEquals(2, result.getAll());
@@ -72,7 +75,7 @@ class UserCardControllerTest {
         when(service.listPaging(0, 20, "id", "asc")).thenReturn(userCards);
         when(service.countAll()).thenReturn(userCards.size());
 
-        ResponseListModel<Address> result = testRestTemplate.getForObject("/v1/userCard", ResponseListModel.class);
+        ResponseListModel<Address> result = testRestTemplate.getForObject(RELATIVE_ENDPOINT, ResponseListModel.class);
 
         assertEquals(2, result.getCount());
         assertEquals(2, result.getAll());

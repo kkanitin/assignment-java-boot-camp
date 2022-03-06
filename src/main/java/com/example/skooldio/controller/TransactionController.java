@@ -23,6 +23,14 @@ import java.util.List;
 @Setter
 public class TransactionController {
 
+    public static final String CONFIRM_ENDPOINT = "/confirm";
+    public static final String CANCELLED_ENDPOINT = "/cancelled";
+    public static final String SHIPPING_ENDPOINT = "/shipping";
+    public static final String SUCCESS_ENDPOINT = "/success";
+    public static final String FAILED_ENDPOINT = "/failed";
+    public static final String GROUP_NUMBER_ENDPOINT = "/groupNumber";
+    public static final String USER_ENDPOINT = "/user";
+
     @Autowired
     private TransactionService service;
 
@@ -43,7 +51,7 @@ public class TransactionController {
         return responseModel;
     }
 
-    @PatchMapping("/confirmList")
+    @PatchMapping(CONFIRM_ENDPOINT)
     @ApiOperation(value = "update status to confirm by list of id", response = Transaction.class)
     public ResponseListModel<TransactionModel> updateStatusToConfirm(
             @RequestBody List<Long> listId
@@ -61,7 +69,7 @@ public class TransactionController {
         return responseModel;
     }
 
-    @PatchMapping("/cancelled/{id}")
+    @PatchMapping(CANCELLED_ENDPOINT + "/{id}")
     @ApiOperation(value = "update status to shipping by id", response = Transaction.class)
     public ResponseModel<TransactionModel> updateStatusToCancelled(@PathVariable Long id) {
         ResponseModel<TransactionModel> responseModel = new ResponseModel<>();
@@ -76,7 +84,7 @@ public class TransactionController {
         return responseModel;
     }
 
-    @PatchMapping("/shipping/{id}")
+    @PatchMapping(SHIPPING_ENDPOINT + "/{id}")
     @ApiOperation(value = "update status to shipping by id", response = Transaction.class)
     public ResponseModel<TransactionModel> updateStatusToShipping(@PathVariable Long id) {
         ResponseModel<TransactionModel> responseModel = new ResponseModel<>();
@@ -91,7 +99,7 @@ public class TransactionController {
         return responseModel;
     }
 
-    @PatchMapping("/success/{id}")
+    @PatchMapping(SUCCESS_ENDPOINT + "/{id}")
     @ApiOperation(value = "update status to success by id", response = Transaction.class)
     public ResponseModel<TransactionModel> updateStatusToSucess(@PathVariable Long id) {
         ResponseModel<TransactionModel> responseModel = new ResponseModel<>();
@@ -106,7 +114,7 @@ public class TransactionController {
         return responseModel;
     }
 
-    @PatchMapping("/failed/{id}")
+    @PatchMapping(FAILED_ENDPOINT + "/{id}")
     @ApiOperation(value = "update status to success by id", response = Transaction.class)
     public ResponseModel<TransactionModel> updateStatusToFailed(@PathVariable Long id) {
         ResponseModel<TransactionModel> responseModel = new ResponseModel<>();
@@ -142,7 +150,7 @@ public class TransactionController {
         return responseModel;
     }
 
-    @GetMapping("/listByGroupNumber/{groupNumber}")
+    @GetMapping(GROUP_NUMBER_ENDPOINT + "/{groupNumber}")
     @ApiOperation(value = "summary by groupNumber", response = Transaction.class)
     public ResponseModel<TransactionSummaryResponseModel> listByGroupNumber(
             @PathVariable Integer groupNumber
@@ -213,7 +221,7 @@ public class TransactionController {
         return responseListModel;
     }
 
-    @GetMapping("/listByUserId/{userId}")
+    @GetMapping(USER_ENDPOINT + "/{userId}")
     @ApiOperation(value = "get Transaction by userId as list", response = Transaction.class)
     public ResponseListModel<Transaction> listByUserId(
             @PathVariable Long userId,

@@ -22,6 +22,8 @@ import java.util.List;
 @Setter
 public class UserCardController {
 
+    public static final String USER_ENDPOINT = "/user";
+
     @Autowired
     private UserCardService service;
 
@@ -80,7 +82,7 @@ public class UserCardController {
         return responseModel;
     }
 
-    @GetMapping("/listByUserId/{userId}")
+    @GetMapping(USER_ENDPOINT+"/{userId}")
     @ApiOperation(value = "get usercard by userid", response = UserCard.class)
     public ResponseListModel<UserCard> listByUserId(
             @PathVariable int userId,

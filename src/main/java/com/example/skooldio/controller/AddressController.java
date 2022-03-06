@@ -21,6 +21,8 @@ import java.util.List;
 @Setter
 public class AddressController {
 
+    public static final String LIST_BY_USERID_ENDPOINT = "/user";
+
     @Autowired
     private AddressService service;
 
@@ -79,8 +81,8 @@ public class AddressController {
         return responseModel;
     }
 
-    @GetMapping("/listByUserId/{userId}")
-    @ApiOperation(value = "get address as list", response = Address.class)
+    @GetMapping(LIST_BY_USERID_ENDPOINT + "/{userId}")
+    @ApiOperation(value = "get address by user id as list", response = Address.class)
     public ResponseListModel<Address> listByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -90,7 +92,7 @@ public class AddressController {
     ) {
         ResponseListModel<Address> responseListModel = new ResponseListModel<>();
         try {
-            List<Address> addresses = service.listByUserId(userId,page, size, sort, dir);
+            List<Address> addresses = service.listByUserId(userId, page, size, sort, dir);
 
             int countAll = service.countByUserId(userId);
             int count = addresses.size();

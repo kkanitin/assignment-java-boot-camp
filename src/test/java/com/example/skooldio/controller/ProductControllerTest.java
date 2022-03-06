@@ -32,7 +32,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ProductControllerTest {
+class ProductControllerTest extends ControllerTest {
+
+    public final String RELATIVE_ENDPOINT = "/v1/product";
+    public final String ABSOLUTE_ENDPOINT = "/skooldio/api/v1/product";
 
     @LocalServerPort
     private int port;
@@ -56,7 +59,7 @@ class ProductControllerTest {
 
         when(service.updateQuantity(10L, 2, UpdateQuantityMode.DEDUCT.name())).thenReturn(product);
 
-        URI uri = new URI("http://localhost:" + port + "/skooldio/api/v1/product/deduct/10");
+        URI uri = new URI(IP + port + ABSOLUTE_ENDPOINT + ProductController.DEDUCT_PRODUCT_ENDPOINT + "/10");
 
         ResponseModel<Product> result = testRestTemplate.patchForObject(uri, 2, ResponseModel.class);
         assertEquals("Success", result.getMsg());
@@ -81,7 +84,7 @@ class ProductControllerTest {
 
         when(service.updateQuantityList(model, UpdateQuantityMode.DEDUCT.name())).thenReturn(productModelList);
 
-        URI uri = new URI("http://localhost:" + port + "/skooldio/api/v1/product/deductList");
+        URI uri = new URI(IP + port + ABSOLUTE_ENDPOINT + ProductController.DEDUCT_PRODUCT_ENDPOINT);
 
         ResponseModel<Product> result = testRestTemplate.patchForObject(uri, entity, ResponseModel.class);
         assertEquals("Success", result.getMsg());
@@ -103,7 +106,7 @@ class ProductControllerTest {
         when(service.listPaging(0, 20, "id", "asc")).thenReturn(products);
         when(service.countAll()).thenReturn(products.size());
 
-        ResponseListModel<Product> result = testRestTemplate.getForObject("/v1/product", ResponseListModel.class);
+        ResponseListModel<Product> result = testRestTemplate.getForObject(RELATIVE_ENDPOINT, ResponseListModel.class);
         assertEquals(2, result.getCount());
         assertEquals(2, result.getAll());
         assertEquals("Success", result.getMsg());

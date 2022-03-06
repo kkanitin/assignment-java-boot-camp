@@ -11,7 +11,6 @@ import com.example.skooldio.service.BasketService;
 import com.example.skooldio.service.ProductService;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class BasketControllerTest {
+class BasketControllerTest extends ControllerTest {
+
+    public final String RELATIVE_ENDPOINT = "/v1/basket";
+    public final String ABSOLUTE_ENDPOINT = "/skooldio/api/v1/basket";
 
     @LocalServerPort
     private int port;
@@ -43,6 +45,7 @@ class BasketControllerTest {
     private BasketService service;
     @Mock
     private ProductRepository productRepository;
+
 
     @BeforeEach
     public void setup() {
@@ -62,7 +65,7 @@ class BasketControllerTest {
 
         when(service.create(new BasketRequestModel(10L, 10L, 2))).thenReturn(basket);
 
-        ResponseModel<Basket> result = testRestTemplate.postForObject("/v1/basket", basket, ResponseModel.class);
+        ResponseModel<Basket> result = testRestTemplate.postForObject(RELATIVE_ENDPOINT, basket, ResponseModel.class);
         assertEquals("Success", result.getMsg());
     }
 
@@ -80,7 +83,8 @@ class BasketControllerTest {
 
         when(service.checkout(10L, listId)).thenReturn(new BasketResponseModel());
 
-        URI uri = new URI("http://localhost:" + port + "/skooldio/api/v1/basket/checkout/10");
+        URI uri = new URI(String.format("%s%s%s%s%s", IP, port, ABSOLUTE_ENDPOINT, BasketController.CHECKOUT_ENDPOINT, "/10"));
+//        System.out.println(String.format("%s%s%s%s%d", IP, port, ENDPOINT, BasketController.CHECKOUT_ENDPOINT, 10));
 
         ResponseEntity<ResponseModel> result = testRestTemplate.exchange(uri, HttpMethod.PUT, entity, ResponseModel.class);
 

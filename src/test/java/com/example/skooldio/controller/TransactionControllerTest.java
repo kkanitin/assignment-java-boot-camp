@@ -29,7 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TransactionControllerTest {
+class TransactionControllerTest extends ControllerTest {
+
+    public final String RELATIVE_ENDPOINT = "/v1/transaction";
+    public final String ABSOLUTE_ENDPOINT = "/skooldio/api/v1/transaction";
 
     @LocalServerPort
     private int port;
@@ -60,7 +63,7 @@ class TransactionControllerTest {
 
         when(service.updateStatusList(ids, TransactionStatus.CONFIRM.name())).thenReturn(Arrays.asList(model1, model2));
 
-        URI uri = new URI("http://localhost:" + port + "/skooldio/api/v1/transaction/confirmList");
+        URI uri = new URI(IP + port + ABSOLUTE_ENDPOINT + TransactionController.CONFIRM_ENDPOINT);
 
         ResponseEntity<ResponseListModel> result = testRestTemplate.exchange(uri, HttpMethod.PATCH, entity, ResponseListModel.class);
         assertEquals(2, Objects.requireNonNull(result.getBody()).getDatas().size());
@@ -79,7 +82,7 @@ class TransactionControllerTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
-        URI uri = new URI("http://localhost:" + port + "/skooldio/api/v1/transaction/cancelled/10");
+        URI uri = new URI(IP + port + ABSOLUTE_ENDPOINT + TransactionController.CANCELLED_ENDPOINT + "/10");
 
         ResponseEntity<ResponseModel> result = testRestTemplate.exchange(uri, HttpMethod.PATCH, entity, ResponseModel.class);
         assertEquals("Success", Objects.requireNonNull(result.getBody()).getMsg());
@@ -97,7 +100,7 @@ class TransactionControllerTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
-        URI uri = new URI("http://localhost:" + port + "/skooldio/api/v1/transaction/shipping/10");
+        URI uri = new URI(IP + port + ABSOLUTE_ENDPOINT + TransactionController.SHIPPING_ENDPOINT + "/10");
 
         ResponseEntity<ResponseModel> result = testRestTemplate.exchange(uri, HttpMethod.PATCH, entity, ResponseModel.class);
         assertEquals("Success", Objects.requireNonNull(result.getBody()).getMsg());
@@ -115,7 +118,7 @@ class TransactionControllerTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
-        URI uri = new URI("http://localhost:" + port + "/skooldio/api/v1/transaction/success/10");
+        URI uri = new URI(IP + port + ABSOLUTE_ENDPOINT + TransactionController.SUCCESS_ENDPOINT + "/10");
 
         ResponseEntity<ResponseModel> result = testRestTemplate.exchange(uri, HttpMethod.PATCH, entity, ResponseModel.class);
         assertEquals("Success", Objects.requireNonNull(result.getBody()).getMsg());
@@ -133,7 +136,7 @@ class TransactionControllerTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
-        URI uri = new URI("http://localhost:" + port + "/skooldio/api/v1/transaction/failed/10");
+        URI uri = new URI(IP + port + ABSOLUTE_ENDPOINT + TransactionController.FAILED_ENDPOINT + "/10");
 
         ResponseEntity<ResponseModel> result = testRestTemplate.exchange(uri, HttpMethod.PATCH, entity, ResponseModel.class);
         assertEquals("Success", Objects.requireNonNull(result.getBody()).getMsg());
@@ -149,7 +152,7 @@ class TransactionControllerTest {
 
         when(service.listByGroupNumber(10)).thenReturn(model);
 
-        ResponseModel<TransactionSummaryResponseModel> result = testRestTemplate.getForObject("/v1/transaction/listByGroupNumber/10", ResponseModel.class);
+        ResponseModel<TransactionSummaryResponseModel> result = testRestTemplate.getForObject(RELATIVE_ENDPOINT + TransactionController.GROUP_NUMBER_ENDPOINT + "/10", ResponseModel.class);
 
         assertEquals("Success", result.getMsg());
     }
@@ -165,7 +168,7 @@ class TransactionControllerTest {
         when(service.listPaging(0, 20, "id", "asc")).thenReturn(transactions);
         when(service.countAll()).thenReturn(transactions.size());
 
-        ResponseListModel<Transaction> result = testRestTemplate.getForObject("/v1/transaction", ResponseListModel.class);
+        ResponseListModel<Transaction> result = testRestTemplate.getForObject(RELATIVE_ENDPOINT, ResponseListModel.class);
 
         assertEquals(2, result.getCount());
         assertEquals(2, result.getAll());
@@ -188,7 +191,7 @@ class TransactionControllerTest {
         params.put("sort", "id");
         params.put("dir", "asc");
 
-        ResponseListModel<Address> result = testRestTemplate.getForObject("/v1/transaction/listByUserId/10", ResponseListModel.class, params);
+        ResponseListModel<Address> result = testRestTemplate.getForObject(RELATIVE_ENDPOINT + TransactionController.USER_ENDPOINT + "/10", ResponseListModel.class, params);
         assertEquals("Success", result.getMsg());
         assertEquals(2, result.getCount());
         assertEquals(2, result.getAll());

@@ -25,7 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AddressControllerTest {
+class AddressControllerTest extends ControllerTest {
+
+    public final String RELATIVE_ENDPOINT = "/v1/address";
+    public final String ABSOLUTE_ENDPOINT = "/skooldio/api/v1/address";
+
 
     @LocalServerPort
     private int port;
@@ -48,7 +52,7 @@ class AddressControllerTest {
         address1.setHouseNo("12/23");
         when(service.create(address1)).thenReturn(address1);
 
-        ResponseModel<Address> result = testRestTemplate.postForObject("/v1/address", address1, ResponseModel.class);
+        ResponseModel<Address> result = testRestTemplate.postForObject(RELATIVE_ENDPOINT, address1, ResponseModel.class);
         assertEquals("Success", result.getMsg());
     }
 
@@ -60,19 +64,8 @@ class AddressControllerTest {
         address1.setHouseNo("12/23");
         when(service.getById((long) 10)).thenReturn(address1);
 
-        ResponseModel<Address> result = testRestTemplate.getForObject("/v1/address/10", ResponseModel.class);
+        ResponseModel<Address> result = testRestTemplate.getForObject(RELATIVE_ENDPOINT + "/10", ResponseModel.class);
         assertEquals("Success", result.getMsg());
-    }
-
-    @Test
-//    @DisplayName("ลบ ต้องลบได้ ได้ผล 200 ok")
-    void deleteSuccess() throws IOException {
-        URL url = new URL("http://localhost:" + port + "/skooldio/api/v1/address/4");
-        HttpURLConnection http = (HttpURLConnection) url.openConnection();
-
-        assertEquals(200, http.getResponseCode());
-        http.disconnect();
-
     }
 
     @Test
@@ -98,7 +91,9 @@ class AddressControllerTest {
         params.put("sort", "id");
         params.put("dir", "asc");
 
-        ResponseListModel<Address> result = testRestTemplate.getForObject("/v1/address/listByUserId/10", ResponseListModel.class, params);
+        String url = RELATIVE_ENDPOINT + AddressController.LIST_BY_USERID_ENDPOINT + "/10";
+
+        ResponseListModel<Address> result = testRestTemplate.getForObject(url, ResponseListModel.class, params);
         assertEquals("Success", result.getMsg());
         assertEquals(2, result.getCount());
         assertEquals(2, result.getAll());
@@ -113,13 +108,12 @@ class AddressControllerTest {
         model.setId(10L);
         model.setHouseNo("12/23");
         String json = new Gson().toJson(address);
-        System.out.println("json : " + json);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
         when(service.updateExceptUserId(10L, address)).thenReturn(model);
 
-        URI uri = new URI("http://localhost:" + port + "/skooldio/api/v1/address/10");
+        URI uri = new URI(IP + port + ABSOLUTE_ENDPOINT + "/10");
 
         ResponseEntity<ResponseModel> result = testRestTemplate.exchange(uri, HttpMethod.PATCH, entity, ResponseModel.class);
         assertEquals("Success", result.getBody().getMsg());
@@ -141,7 +135,7 @@ class AddressControllerTest {
         when(service.listPaging(0, 20, "id", "asc")).thenReturn(addresses);
         when(service.countAll()).thenReturn(addresses.size());
         //Act
-        ResponseListModel<Address> result = testRestTemplate.getForObject("/v1/address", ResponseListModel.class);
+        ResponseListModel<Address> result = testRestTemplate.getForObject(RELATIVE_ENDPOINT, ResponseListModel.class);
         //verify
         assertEquals(2, result.getCount());
         assertEquals(2, result.getAll());

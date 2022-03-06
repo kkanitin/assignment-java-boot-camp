@@ -24,6 +24,9 @@ import java.util.List;
 @Setter
 public class BasketController {
 
+    public static final String CHECKOUT_ENDPOINT = "/checkout/user";
+    public static final String LIST_BY_USERID_ENDPOINT = "/user";
+
     @Autowired
     private BasketService service;
     @Autowired
@@ -47,7 +50,7 @@ public class BasketController {
         return responseModel;
     }
 
-    @PutMapping("/checkout/{userId}")
+    @PutMapping(CHECKOUT_ENDPOINT + "/{userId}")
     @ApiOperation(value = "checkout basket by userid", response = Basket.class)
     public ResponseModel<BasketResponseModel> checkout(@PathVariable Long userId, @RequestBody List<Integer> productsIdList) {
         ResponseModel<BasketResponseModel> responseModel = new ResponseModel<>();
@@ -103,7 +106,7 @@ public class BasketController {
         return responseModel;
     }
 
-    @GetMapping("/listByUserId/{userId}")
+    @GetMapping(LIST_BY_USERID_ENDPOINT + "/{userId}")
     @ApiOperation(value = "get basket list by userid", response = Basket.class)
     public ResponseModel<BasketResponseModel> listByUserId(
             @PathVariable Long userId,
