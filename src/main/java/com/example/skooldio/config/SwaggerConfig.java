@@ -21,7 +21,6 @@ public class SwaggerConfig {
     // http://localhost:8080/skooldio/api/docs
     @RequestMapping(value = "/docs", method = RequestMethod.GET)
     public String docs(){
-//        return "forward:/swagger-ui.html";
         return "redirect:/swagger-ui.html";
     }
 
@@ -33,7 +32,6 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build();
-//        return new Docket(DocumentationType.SWAGGER_2).select().build();
     }
 
     private ApiInfo swaggerApiInfo() {
@@ -42,18 +40,5 @@ public class SwaggerConfig {
                 .description("E-commerce api")
                 .version("1.0.0")
                 .build();
-    }
-
-    @Bean
-    UiConfiguration uiConfig() {
-        return new UiConfiguration(
-                null,
-                "none",
-                "alpha",
-                "schema",
-                UiConfiguration.Constants.DEFAULT_SUBMIT_METHODS,
-                false,
-                true,
-                60000L);
     }
 }

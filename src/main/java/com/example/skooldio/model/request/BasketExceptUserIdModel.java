@@ -13,11 +13,11 @@ import lombok.Setter;
 @ApiModel(description = "BasketExceptUserId")
 public class BasketExceptUserIdModel {
 
-    @ApiParam(name = "productId", example = "0", value = "1", defaultValue = "1", required = false )
-    @ApiModelProperty(name = "productId", example = "0", required = false)
+    @ApiParam(name = "productId", example = "0", value = "1", defaultValue = "1" )
+    @ApiModelProperty(name = "productId", example = "0")
     private Long productId;
 
-    @ApiParam(name = "quantity", example = "0", value = "1", defaultValue = "1", required = false )
-    @ApiModelProperty(name = "quantity", example = "0", required = false)
+    @ApiParam(name = "quantity", example = "0", value = "1", defaultValue = "1")
+    @ApiModelProperty(name = "quantity", example = "0")
     private int quantity;
 }

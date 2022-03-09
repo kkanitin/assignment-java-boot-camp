@@ -17,18 +17,18 @@ import java.util.List;
 public class ResponseListModel<T> {
 
     @XmlElement(name = "datas")
-    @ApiParam(name = "datas", example = "0", value = "datas", required = false )
-    @ApiModelProperty(name = "datas", example = "0", required = false)
+    @ApiParam(name = "datas", example = "0", value = "datas")
+    @ApiModelProperty(name = "datas", example = "0")
     private List<T> datas;
 
     @XmlElement(name = "msg")
-    @ApiParam(name = "msg", example = "0", value = "msg", defaultValue = "msg", required = false )
-    @ApiModelProperty(name = "msg", example = "0", dataType = "String", value = "example msg", required = false)
+    @ApiParam(name = "msg", example = "0", value = "msg", defaultValue = "msg")
+    @ApiModelProperty(name = "msg", example = "0", dataType = "String", value = "example msg")
     private String msg;
 
     @XmlElement(name = "errorMsg")
-    @ApiParam(name = "errorMsg", example = "0", value = "error msg", defaultValue = "error msg", required = false )
-    @ApiModelProperty(name = "errorMsg", example = "0", dataType = "String", value = "", required = false)
+    @ApiParam(name = "errorMsg", example = "0", value = "error msg", defaultValue = "error msg")
+    @ApiModelProperty(name = "errorMsg", example = "0", dataType = "String", value = "")
     private String errorMsg;
 
     @XmlElement(name = "all")

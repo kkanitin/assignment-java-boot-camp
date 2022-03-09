@@ -17,8 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 public class UpdateProductQuantityListModel {
 
-    @ApiParam(name = "productQuantityModelList", value = "productQuantityModelList", defaultValue = "cardType", required = false )
-    @ApiModelProperty(name = "productQuantityModelList", required = false)
+    @ApiParam(name = "productQuantityModelList", value = "productQuantityModelList", defaultValue = "cardType")
+    @ApiModelProperty(name = "productQuantityModelList")
     List<ProductQuantityModel> productQuantityModelList;
 
     public UpdateProductQuantityListModel() {

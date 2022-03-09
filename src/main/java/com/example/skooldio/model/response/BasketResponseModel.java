@@ -19,13 +19,13 @@ import java.util.List;
 public class BasketResponseModel {
 
     @XmlElement(name = "user")
-    @ApiParam(name = "user", example = "0", value = "user", required = false)
-    @ApiModelProperty(name = "user", example = "0", required = false)
+    @ApiParam(name = "user", example = "0", value = "user")
+    @ApiModelProperty(name = "user", example = "0")
     private User user;
 
     @XmlElement(name = "products")
-    @ApiParam(name = "products", example = "0", value = "products", required = false)
-    @ApiModelProperty(name = "products", example = "0", required = false)
+    @ApiParam(name = "products", example = "0", value = "products")
+    @ApiModelProperty(name = "products", example = "0")
     private List<ProductModel> products;
 
     public BasketResponseModel() {

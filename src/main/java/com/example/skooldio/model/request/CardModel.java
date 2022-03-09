@@ -13,23 +13,23 @@ import lombok.Setter;
 @ApiModel(description = "card")
 public class CardModel {
 
-    @ApiParam(name = "cardType", example = "VISA", value = "cardType", defaultValue = "cardType", required = false )
-    @ApiModelProperty(name = "cardType", example = "0", dataType = "String", value = "example msg", required = false)
+    @ApiParam(name = "cardType", example = "VISA", value = "cardType", defaultValue = "cardType")
+    @ApiModelProperty(name = "cardType", example = "0", dataType = "String", value = "example msg")
     private String cardType;
 
-    @ApiParam(name = "cardNo", example = "1234", value = "cardNo", defaultValue = "cardNo", required = false )
-    @ApiModelProperty(name = "cardNo", example = "0", dataType = "String", value = "example msg", required = false)
+    @ApiParam(name = "cardNo", example = "1234", value = "cardNo", defaultValue = "cardNo")
+    @ApiModelProperty(name = "cardNo", example = "0", dataType = "String", value = "example msg")
     private String cardNo;
 
-    @ApiParam(name = "expireMonth", example = "0", value = "expireMonth", defaultValue = "expireMonth", required = false )
-    @ApiModelProperty(name = "expireMonth", example = "0", dataType = "String", value = "example msg", required = false)
+    @ApiParam(name = "expireMonth", example = "0", value = "expireMonth", defaultValue = "expireMonth")
+    @ApiModelProperty(name = "expireMonth", example = "0", dataType = "String", value = "example msg")
     private String expireMonth;
 
-    @ApiParam(name = "expireYear", example = "0", value = "expireYear", defaultValue = "expireYear", required = false )
-    @ApiModelProperty(name = "expireYear", example = "0", dataType = "String", value = "example msg", required = false)
+    @ApiParam(name = "expireYear", example = "0", value = "expireYear", defaultValue = "expireYear")
+    @ApiModelProperty(name = "expireYear", example = "0", dataType = "String", value = "example msg")
     private String expireYear;
 
-    @ApiParam(name = "ccvOrCvv", example = "0", value = "ccvOrCvv", defaultValue = "ccvOrCvv", required = false )
-    @ApiModelProperty(name = "ccvOrCvv", example = "0", dataType = "String", value = "example msg", required = false)
+    @ApiParam(name = "ccvOrCvv", example = "0", value = "ccvOrCvv", defaultValue = "ccvOrCvv")
+    @ApiModelProperty(name = "ccvOrCvv", example = "0", dataType = "String", value = "example msg")
     private String ccvOrCvv;
 }

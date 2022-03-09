@@ -15,11 +15,11 @@ import lombok.Setter;
 @ApiModel(description = "ProductQuantity")
 public class ProductQuantityModel {
 
-    @ApiParam(name = "productId", example = "0", value = "productId", defaultValue = "cardType", required = false )
-    @ApiModelProperty(name = "productId", example = "0", required = false)
+    @ApiParam(name = "productId", example = "0", value = "productId", defaultValue = "cardType")
+    @ApiModelProperty(name = "productId", example = "0")
     private long productId;
 
-    @ApiParam(name = "quantity", example = "0", value = "quantity", defaultValue = "cardType", required = false )
-    @ApiModelProperty(name = "quantity", example = "0", required = false)
+    @ApiParam(name = "quantity", example = "0", value = "quantity", defaultValue = "cardType")
+    @ApiModelProperty(name = "quantity", example = "0")
     private int quantity;
 }

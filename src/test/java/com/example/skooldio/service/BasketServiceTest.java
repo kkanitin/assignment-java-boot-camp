@@ -121,10 +121,6 @@ class BasketServiceTest {
         Basket basket2 = new Basket(11L, user, product2, 5);
 
         when(userRepository.findById(10L)).thenReturn(Optional.of(user));
-//        when(addressRepository.listByUserId(user, getPageable(0, 20, "priority", "asc"))).thenReturn(Optional.of(Arrays.asList(address, address1)));
-//        when(userCardRepository.listByUserId(user, getPageable(0, 20, "priority", "asc"))).thenReturn(Optional.of(Arrays.asList(userCard1, userCard2)));
-//        when(addressRepository.listByUserId(user, getPageable(0, 1, "priority", "asc"))).thenReturn(Optional.of(Collections.singletonList(address)));
-//        when(userCardRepository.listByUserId(user, getPageable(0, 1, "priority", "asc"))).thenReturn(Optional.of(Collections.singletonList(userCard1)));
         when(repository.listByUserId(user, getPageable(0, -1, "id", "asc"))).thenReturn(Optional.of(Arrays.asList(basket1, basket2)));
 
         BasketResponseModel result = service.checkout(10L, Arrays.asList(10, 11));

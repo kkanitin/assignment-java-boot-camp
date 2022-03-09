@@ -60,7 +60,6 @@ class AddressServiceTest {
     }
 
     @Test
-//    @DisplayName("create address ต้องได้ success")
     void create() {
         User user = new User("tom", "test");
         user.setId(5);
@@ -76,7 +75,6 @@ class AddressServiceTest {
     }
 
     @Test
-//    @DisplayName("list by userId ต้องได้ success")
     void listByUserId() {
         User user = new User("tom", "test");
         user.setId(5L);
@@ -101,7 +99,6 @@ class AddressServiceTest {
     }
 
     @Test
-//    @DisplayName("count by userId ต้องได้ success")
     void countByUserId() {
         service = new AddressService();
         service.setRepository(addressRepository);

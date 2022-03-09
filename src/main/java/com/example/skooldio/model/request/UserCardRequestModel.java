@@ -17,5 +17,4 @@ public class UserCardRequestModel {
     private String expireMonth;
     private String expireYear;
     private String ccvOrCvv;
-//    private int priority;
 }

@@ -72,7 +72,6 @@ class TransactionControllerTest extends ControllerTest {
     }
 
     @Test
-//    @DisplayName("updateStatusToCancelled ต้องได้ success")
     void updateStatusToCancelled() throws URISyntaxException {
         TransactionModel model1 = new TransactionModel();
         model1.setStatus(TransactionStatus.CANCELLED.name());
@@ -90,7 +89,6 @@ class TransactionControllerTest extends ControllerTest {
     }
 
     @Test
-//    @DisplayName("updateStatusToShipping ต้องได้ success")
     void updateStatusToShipping() throws URISyntaxException {
         TransactionModel model1 = new TransactionModel();
         model1.setStatus(TransactionStatus.SHIPPING.name());
@@ -108,7 +106,6 @@ class TransactionControllerTest extends ControllerTest {
     }
 
     @Test
-//    @DisplayName("updateStatusToSucess ต้องได้ success")
     void updateStatusToSucess() throws URISyntaxException {
         TransactionModel model1 = new TransactionModel();
         model1.setStatus(TransactionStatus.SUCCESS.name());
@@ -126,7 +123,6 @@ class TransactionControllerTest extends ControllerTest {
     }
 
     @Test
-//    @DisplayName("updateStatusToFailed ต้องได้ success")
     void updateStatusToFailed() throws URISyntaxException {
         TransactionModel model1 = new TransactionModel();
         model1.setStatus(TransactionStatus.FAILED.name());

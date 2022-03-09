@@ -16,7 +16,7 @@ import java.util.List;
 public class BusketCheckoutModel {
 
     @XmlElement(name = "productsId")
-    @ApiParam(name = "productsId", example = "0", value = "productsId", required = false)
-    @ApiModelProperty(name = "productsId", example = "0", required = false)
+    @ApiParam(name = "productsId", example = "0", value = "productsId")
+    @ApiModelProperty(name = "productsId", example = "0")
     private List<Integer> productsId;
 }

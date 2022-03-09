@@ -53,7 +53,6 @@ class BasketControllerTest extends ControllerTest {
     }
 
     @Test
-//    @DisplayName("create basket ต้องได้ผล success")
     void create() {
         Basket basket = new Basket();
         User user = new User("testuser", "test");
@@ -70,7 +69,6 @@ class BasketControllerTest extends ControllerTest {
     }
 
     @Test
-//    @DisplayName("checkout basket ต้องได้ผล success")
     void checkout() throws URISyntaxException {
         ProductService productService = new ProductService();
         productService.setRepository(productRepository);
@@ -84,7 +82,6 @@ class BasketControllerTest extends ControllerTest {
         when(service.checkout(10L, listId)).thenReturn(new BasketResponseModel());
 
         URI uri = new URI(String.format("%s%s%s%s%s", IP, port, ABSOLUTE_ENDPOINT, BasketController.CHECKOUT_ENDPOINT, "/10"));
-//        System.out.println(String.format("%s%s%s%s%d", IP, port, ENDPOINT, BasketController.CHECKOUT_ENDPOINT, 10));
 
         ResponseEntity<ResponseModel> result = testRestTemplate.exchange(uri, HttpMethod.PUT, entity, ResponseModel.class);
 

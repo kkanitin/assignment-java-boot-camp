@@ -33,13 +33,4 @@ public class UserCard {
     private String ccvOrCvv;
     private Integer priority;
 
-//    public UserCard(User userId, String cardType, String cardNo, String expireMonth, String expireYear, String ccvOrCvv, int priority) {
-//        this.userId = userId;
-//        this.cardType = cardType;
-//        this.cardNo = cardNo;
-//        this.expireMonth = expireMonth;
-//        this.expireYear = expireYear;
-//        this.ccvOrCvv = ccvOrCvv;
-//        this.priority = priority;
-//    }
 }

@@ -45,7 +45,6 @@ class AddressControllerTest extends ControllerTest {
     }
 
     @Test
-//    @DisplayName("create address ต้องได้ผล success")
     void create() {
         Address address1 = new Address();
         address1.setId(10);
@@ -57,7 +56,6 @@ class AddressControllerTest extends ControllerTest {
     }
 
     @Test
-//    @DisplayName("get by id ต้องได้ผล success")
     void getById() {
         Address address1 = new Address();
         address1.setId(10);
@@ -69,7 +67,6 @@ class AddressControllerTest extends ControllerTest {
     }
 
     @Test
-//    @DisplayName("get by userid (10) ต้องได้ success")
     void listByUserId() {
         Address address1 = new Address();
         address1.setId(10);
@@ -100,7 +97,6 @@ class AddressControllerTest extends ControllerTest {
     }
 
     @Test
-//    @DisplayName("update ยกเว้น userId ต้องได้success")
     void updateExceptUserId() throws URISyntaxException {
         Address address = new Address(10L, new User("testuser", "test"), "12/23",
                 "", "", "", "", "", "", "", "", 10800, 1);
@@ -121,7 +117,6 @@ class AddressControllerTest extends ControllerTest {
     }
 
     @Test
-//    @DisplayName("list paging ต้องได้ค่า msg เป็น success")
     void listPaging() {
         //mock
         Address address1 = new Address();
