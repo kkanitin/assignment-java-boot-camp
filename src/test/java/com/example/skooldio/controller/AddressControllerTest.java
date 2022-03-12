@@ -1,12 +1,16 @@
 package com.example.skooldio.controller;
 
+import com.example.skooldio.config.security.AuthUtil;
 import com.example.skooldio.entity.Address;
 import com.example.skooldio.entity.User;
 import com.example.skooldio.model.response.AddressResponseModel;
 import com.example.skooldio.model.response.ResponseListModel;
 import com.example.skooldio.model.response.ResponseModel;
 import com.example.skooldio.service.AddressService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +20,12 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 
-import java.io.IOException;
 import java.net.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -30,7 +36,6 @@ class AddressControllerTest extends ControllerTest {
     public final String RELATIVE_ENDPOINT = "/v1/address";
     public final String ABSOLUTE_ENDPOINT = "/skooldio/api/v1/address";
 
-
     @LocalServerPort
     private int port;
 
@@ -38,9 +43,28 @@ class AddressControllerTest extends ControllerTest {
     private TestRestTemplate testRestTemplate;
     @MockBean
     private AddressService service;
+    private String token = "";
+    private HttpHeaders headers = new HttpHeaders();
 
     @BeforeEach
     public void setup() {
+        List<GrantedAuthority> grantedAuthorities = AuthorityUtils
+                .commaSeparatedStringToAuthorityList("GRANT");
+        token = Jwts
+                .builder()
+                .setId("skooldio")
+                .setSubject("tom")
+                .claim("authorities",
+                        grantedAuthorities.stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .collect(Collectors.toList()))
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 600000)) //10 mins
+                .signWith(SignatureAlgorithm.HS512,
+                        AuthUtil.SECRET.getBytes()).compact();
+
+        headers.set("jwtToken", token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
         testRestTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
     }
 
@@ -49,25 +73,29 @@ class AddressControllerTest extends ControllerTest {
         Address address1 = new Address();
         address1.setId(10);
         address1.setHouseNo("12/23");
+        HttpEntity<Address> request = new HttpEntity<>(address1, headers);
         when(service.create(address1)).thenReturn(address1);
 
-        ResponseModel<Address> result = testRestTemplate.postForObject(RELATIVE_ENDPOINT, address1, ResponseModel.class);
+        ResponseModel<Address> result = testRestTemplate.postForObject(RELATIVE_ENDPOINT, request, ResponseModel.class);
         assertEquals("Success", result.getMsg());
     }
 
     @Test
-    void getById() {
+    void getById() throws URISyntaxException {
         Address address1 = new Address();
         address1.setId(10);
         address1.setHouseNo("12/23");
+        HttpEntity<Address> request = new HttpEntity<>(headers);
         when(service.getById((long) 10)).thenReturn(address1);
 
-        ResponseModel<Address> result = testRestTemplate.getForObject(RELATIVE_ENDPOINT + "/10", ResponseModel.class);
-        assertEquals("Success", result.getMsg());
+        URI uri = new URI(IP + port + ABSOLUTE_ENDPOINT + "/10");
+
+        ResponseEntity<ResponseModel> result = testRestTemplate.exchange(uri, HttpMethod.GET, request, ResponseModel.class);
+        assertEquals("Success", result.getBody().getMsg());
     }
 
     @Test
-    void listByUserId() {
+    void listByUserId() throws URISyntaxException, JsonProcessingException {
         Address address1 = new Address();
         address1.setId(10);
         address1.setHouseNo("12/23");
@@ -82,18 +110,13 @@ class AddressControllerTest extends ControllerTest {
         addresses.add(address2);
         when(service.listByUserId((long) 10, 0, 20, "id", "asc")).thenReturn(addresses);
         when(service.countByUserId((long) 10)).thenReturn(addresses.size());
-        Map<String, String> params = new HashMap<>();
-        params.put("page", "0");
-        params.put("size", "20");
-        params.put("sort", "id");
-        params.put("dir", "asc");
+        String queryParam = "?dir=asc&page=0&size=20&sort=id";
+        HttpEntity<Address> request = new HttpEntity<>(headers);
 
-        String url = RELATIVE_ENDPOINT + AddressController.LIST_BY_USERID_ENDPOINT + "/10";
+        URI uri = new URI(IP + port + ABSOLUTE_ENDPOINT + AddressController.LIST_BY_USERID_ENDPOINT + "/10" + queryParam);
 
-        ResponseListModel<Address> result = testRestTemplate.getForObject(url, ResponseListModel.class, params);
-        assertEquals("Success", result.getMsg());
-        assertEquals(2, result.getCount());
-        assertEquals(2, result.getAll());
+        ResponseEntity<ResponseModel> result = testRestTemplate.exchange(uri, HttpMethod.GET, request, ResponseModel.class);
+        assertEquals("Success", result.getBody().getMsg());
     }
 
     @Test
@@ -104,20 +127,18 @@ class AddressControllerTest extends ControllerTest {
         model.setId(10L);
         model.setHouseNo("12/23");
         String json = new Gson().toJson(address);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+        HttpEntity<String> request = new HttpEntity<>(json, headers);
         when(service.updateExceptUserId(10L, address)).thenReturn(model);
 
         URI uri = new URI(IP + port + ABSOLUTE_ENDPOINT + "/10");
 
-        ResponseEntity<ResponseModel> result = testRestTemplate.exchange(uri, HttpMethod.PATCH, entity, ResponseModel.class);
+        ResponseEntity<ResponseModel> result = testRestTemplate.exchange(uri, HttpMethod.PATCH, request, ResponseModel.class);
         assertEquals("Success", result.getBody().getMsg());
         assertEquals(200, result.getStatusCodeValue());
     }
 
     @Test
-    void listPaging() {
+    void listPaging() throws URISyntaxException {
         //mock
         Address address1 = new Address();
         address1.setId(10);
@@ -126,14 +147,16 @@ class AddressControllerTest extends ControllerTest {
         address2.setId(11);
         address2.setHouseNo("25/26");
         List<Address> addresses = Arrays.asList(address1, address2);
+        HttpEntity<Address> request = new HttpEntity<>(headers);
 
         when(service.listPaging(0, 20, "id", "asc")).thenReturn(addresses);
         when(service.countAll()).thenReturn(addresses.size());
         //Act
-        ResponseListModel<Address> result = testRestTemplate.getForObject(RELATIVE_ENDPOINT, ResponseListModel.class);
+        URI uri = new URI(IP + port + ABSOLUTE_ENDPOINT);
+        System.out.println("uri : " + uri.getPath());
+        ResponseEntity<ResponseListModel> result = testRestTemplate.exchange(uri, HttpMethod.GET, request, ResponseListModel.class);
         //verify
-        assertEquals(2, result.getCount());
-        assertEquals(2, result.getAll());
-        assertEquals("Success", result.getMsg());
+        assertEquals("Success", result.getBody().getMsg());
+        assertEquals(200, result.getStatusCodeValue());
     }
 }

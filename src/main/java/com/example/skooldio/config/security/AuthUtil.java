@@ -15,20 +15,19 @@ import java.util.stream.Collectors;
 
 public class AuthUtil {
 
-    private static final String HEADER = "Authorization";
-    private static final String PREFIX = "Bearer ";
-    private static final String SECRET = "mySecretKey";
+    public static final String HEADER = "Authorization";
+    public static final String PREFIX = "Bearer ";
+    public static final String SECRET = "mySecretKey";
     public static final String JWT_VERIFY_FAILED = "JWT verify failed.";
 
     public static String getJWTToken(String username) {
-        String secretKey = "mySecretKey";
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
                 .commaSeparatedStringToAuthorityList("GRANT");
 
         String token = Jwts
                 .builder()
                 .setId("skooldio")
-                .setSubject("skooldio")
+                .setSubject(username)
                 .claim("authorities",
                         grantedAuthorities.stream()
                                 .map(GrantedAuthority::getAuthority)
@@ -36,7 +35,7 @@ public class AuthUtil {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 600000)) //10 mins
                 .signWith(SignatureAlgorithm.HS512,
-                        secretKey.getBytes()).compact();
+                        AuthUtil.SECRET.getBytes()).compact();
 
         return AuthUtil.PREFIX + token;
     }
