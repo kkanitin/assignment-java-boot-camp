@@ -2,10 +2,10 @@
 
 INSERT INTO "PUBLIC"."USER_INFO"
 VALUES
-(1, 'somchai', 'somchai'),
-(2, 'tom', 'tom'), 
-(3, 'alex', 'alex'), 
-(4, 'roger', 'roger');
+(1, 'tom', 'tom', '1RM1L4ySu1WZ/M9d5de3vA=='),
+(2, 'somchai', 'somchai', 'yrn4TyjwUqJSREfP/X5JNQ=='),
+(3, 'alex', 'alex', 'WplLkrJhDRnQRennyPQ+Sw=='),
+(4, 'tony', 'tony', '086Kf9qDzKujM8FF2QEUlA==');
 
 COMMIT;
 

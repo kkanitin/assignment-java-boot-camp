@@ -1,5 +1,6 @@
 package com.example.skooldio.controller;
 
+import com.example.skooldio.config.security.AuthUtil;
 import com.example.skooldio.entity.Address;
 import com.example.skooldio.model.response.AddressResponseModel;
 import com.example.skooldio.model.response.ResponseListModel;
@@ -28,14 +29,18 @@ public class AddressController {
 
     @PostMapping
     @ApiOperation(value = "Address user", response = Address.class)
-    public ResponseModel<Address> create(@RequestBody Address entity) {
+    public ResponseModel<Address> create(@RequestHeader String jwtToken, @RequestBody Address entity) {
         ResponseModel<Address> responseModel = new ResponseModel<>();
         try {
-            Address address = service.create(entity);
-            responseModel.setData(address);
-
-            responseModel.setMsg("Success");
-            responseModel.setErrorMsg(null);
+            if (AuthUtil.validateToken(jwtToken)) {
+                Address address = service.create(entity);
+                responseModel.setData(address);
+                responseModel.setMsg("Success");
+                responseModel.setErrorMsg(null);
+            } else {
+                responseModel.setMsg("Failed");
+                responseModel.setErrorMsg(AuthUtil.JWT_VERIFY_FAILED);
+            }
         } catch (Exception ex) {
             responseModel.setMsg("Failed");
             responseModel.setErrorMsg(ex.getMessage());
@@ -45,18 +50,22 @@ public class AddressController {
 
     @GetMapping("/{id}")
     @ApiOperation(value = "get Address by id", response = Address.class)
-    public ResponseModel<Address> getById(@PathVariable Long id) {
+    public ResponseModel<Address> getById(@RequestHeader String jwtToken, @PathVariable Long id) {
         ResponseModel<Address> responseModel = new ResponseModel<>();
         try {
-            Address address = service.getById(id);
-            responseModel.setData(address);
-            responseModel.setMsg("Success");
-            responseModel.setErrorMsg(null);
+            if (AuthUtil.validateToken(jwtToken)) {
+                Address address = service.getById(id);
+                responseModel.setData(address);
+                responseModel.setMsg("Success");
+                responseModel.setErrorMsg(null);
 
-            if (null == address) {
-                responseModel.setErrorMsg(String.format("address id %d not found", id));
+                if (null == address) {
+                    responseModel.setErrorMsg(String.format("address id %d not found", id));
+                }
+            } else {
+                responseModel.setMsg("Failed");
+                responseModel.setErrorMsg(AuthUtil.JWT_VERIFY_FAILED);
             }
-
         } catch (Exception ex) {
             responseModel.setMsg("Failed");
             responseModel.setErrorMsg(ex.getMessage());
@@ -66,14 +75,18 @@ public class AddressController {
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "delete address by id", response = Address.class)
-    public ResponseModel<Address> delete(@PathVariable Long id) {
+    public ResponseModel<Address> delete(@RequestHeader String jwtToken, @PathVariable Long id) {
         ResponseModel<Address> responseModel = new ResponseModel<>();
         try {
-            service.deleteById(id);
-            responseModel.setData(null);
-            responseModel.setMsg(String.format("Address id %d deleted.", id));
-            responseModel.setErrorMsg(null);
-
+            if (AuthUtil.validateToken(jwtToken)) {
+                service.deleteById(id);
+                responseModel.setData(null);
+                responseModel.setMsg(String.format("Address id %d deleted.", id));
+                responseModel.setErrorMsg(null);
+            } else {
+                responseModel.setMsg("Failed");
+                responseModel.setErrorMsg(AuthUtil.JWT_VERIFY_FAILED);
+            }
         } catch (Exception ex) {
             responseModel.setMsg("Failed");
             responseModel.setErrorMsg(ex.getMessage());
@@ -84,6 +97,7 @@ public class AddressController {
     @GetMapping(LIST_BY_USERID_ENDPOINT + "/{userId}")
     @ApiOperation(value = "get address by user id as list", response = Address.class)
     public ResponseListModel<Address> listByUserId(
+            @RequestHeader String jwtToken,
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -92,24 +106,30 @@ public class AddressController {
     ) {
         ResponseListModel<Address> responseListModel = new ResponseListModel<>();
         try {
-            List<Address> addresses = service.listByUserId(userId, page, size, sort, dir);
+            if (AuthUtil.validateToken(jwtToken)) {
+                List<Address> addresses = service.listByUserId(userId, page, size, sort, dir);
 
-            int countAll = service.countByUserId(userId);
-            int count = addresses.size();
-            int next = 0;
-            if (count >= size) {
-                next = page + size;
-            }
-            if (next >= countAll) {
-                next = 0;
+                int countAll = service.countByUserId(userId);
+                int count = addresses.size();
+                int next = 0;
+                if (count >= size) {
+                    next = page + size;
+                }
+                if (next >= countAll) {
+                    next = 0;
+                }
+
+                responseListModel.setDatas(addresses);
+                responseListModel.setAll(countAll);
+                responseListModel.setCount(count);
+                responseListModel.setNext(next);
+                responseListModel.setMsg("Success");
+                responseListModel.setErrorMsg(null);
+            } else {
+                responseListModel.setMsg("Failed");
+                responseListModel.setErrorMsg(AuthUtil.JWT_VERIFY_FAILED);
             }
 
-            responseListModel.setDatas(addresses);
-            responseListModel.setAll(countAll);
-            responseListModel.setCount(count);
-            responseListModel.setNext(next);
-            responseListModel.setMsg("Success");
-            responseListModel.setErrorMsg(null);
         } catch (Exception ex) {
             responseListModel.setMsg("Failed");
             responseListModel.setErrorMsg(ex.getMessage());
@@ -119,12 +139,18 @@ public class AddressController {
 
     @PatchMapping("/{id}")
     @ApiOperation(value = "update address except userId by id", response = AddressResponseModel.class)
-    public ResponseModel<AddressResponseModel> updateExceptUserId(@PathVariable Long id, @RequestBody Address entity) {
+    public ResponseModel<AddressResponseModel> updateExceptUserId(@RequestHeader String jwtToken, @PathVariable Long id, @RequestBody Address entity) {
         ResponseModel<AddressResponseModel> responseModel = new ResponseModel<>();
         try {
-            AddressResponseModel model = service.updateExceptUserId(id, entity);
-            responseModel.setMsg("Success");
-            responseModel.setData(model);
+            if (AuthUtil.validateToken(jwtToken)) {
+                AddressResponseModel model = service.updateExceptUserId(id, entity);
+                responseModel.setMsg("Success");
+                responseModel.setData(model);
+            } else {
+                responseModel.setMsg("Failed");
+                responseModel.setErrorMsg(AuthUtil.JWT_VERIFY_FAILED);
+            }
+
         } catch (Exception ex) {
             ex.printStackTrace();
             responseModel.setMsg("Failed");
@@ -136,6 +162,7 @@ public class AddressController {
     @GetMapping
     @ApiOperation(value = "get address as list", response = Address.class)
     public ResponseListModel<Address> listPaging(
+            @RequestHeader String jwtToken,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "id") String sort,
@@ -143,24 +170,29 @@ public class AddressController {
     ) {
         ResponseListModel<Address> responseListModel = new ResponseListModel<>();
         try {
-            List<Address> addresses = service.listPaging(page, size, sort, dir);
+            if (AuthUtil.validateToken(jwtToken)) {
+                List<Address> addresses = service.listPaging(page, size, sort, dir);
 
-            int countAll = service.countAll();
-            int count = addresses.size();
-            int next = 0;
-            if (count >= size) {
-                next = page + size;
-            }
-            if (next >= countAll) {
-                next = 0;
-            }
+                int countAll = service.countAll();
+                int count = addresses.size();
+                int next = 0;
+                if (count >= size) {
+                    next = page + size;
+                }
+                if (next >= countAll) {
+                    next = 0;
+                }
 
-            responseListModel.setDatas(addresses);
-            responseListModel.setAll(countAll);
-            responseListModel.setCount(count);
-            responseListModel.setNext(next);
-            responseListModel.setMsg("Success");
-            responseListModel.setErrorMsg(null);
+                responseListModel.setDatas(addresses);
+                responseListModel.setAll(countAll);
+                responseListModel.setCount(count);
+                responseListModel.setNext(next);
+                responseListModel.setMsg("Success");
+                responseListModel.setErrorMsg(null);
+            } else {
+                responseListModel.setMsg("Failed");
+                responseListModel.setErrorMsg(AuthUtil.JWT_VERIFY_FAILED);
+            }
         } catch (Exception ex) {
             responseListModel.setMsg("Failed");
             responseListModel.setErrorMsg(ex.getMessage());
